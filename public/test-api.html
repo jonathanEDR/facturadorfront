@@ -1,0 +1,19 @@
+console.log("Testing predefined templates API...");
+
+fetch('http://localhost:8000/api/v1/templates/predefined/list')
+  .then(response => response.json())
+  .then(data => {
+    console.log('✅ Predefined templates API working:', data);
+    document.body.innerHTML = `
+      <h2>✅ API Test Successful!</h2>
+      <h3>Predefined Templates Found:</h3>
+      <pre>${JSON.stringify(data, null, 2)}</pre>
+    `;
+  })
+  .catch(error => {
+    console.error('❌ API Error:', error);
+    document.body.innerHTML = `
+      <h2>❌ API Test Failed</h2>
+      <p>Error: ${error.message}</p>
+    `;
+  });

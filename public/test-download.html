@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Descarga Directa</title>
+</head>
+<body>
+    <h1>Test de URLs Estáticas</h1>
+    <button onclick="testXML()">Probar XML</button>
+    <button onclick="testZIP()">Probar ZIP</button>
+    <button onclick="testCDR()">Probar CDR</button>
+    
+    <div id="results"></div>
+
+    <script>
+        const BASE_URL = 'http://localhost:8000';
+        const numeroDocumento = '20612969125-01-F001-00000006';
+
+        async function testURL(url, tipo) {
+            const results = document.getElementById('results');
+            results.innerHTML += `<p>Probando ${tipo}: ${url}</p>`;
+            
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    results.innerHTML += `<p>✅ ${tipo}: OK (${blob.size} bytes)</p>`;
+                    
+                    // Crear descarga
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `test_${tipo.toLowerCase()}.${tipo === 'CDR' ? 'zip' : tipo.toLowerCase()}`;
+                    a.click();
+                    
+                } else {
+                    results.innerHTML += `<p>❌ ${tipo}: Error ${response.status}</p>`;
+                }
+            } catch (error) {
+                results.innerHTML += `<p>❌ ${tipo}: ${error.message}</p>`;
+            }
+        }
+
+        function testXML() {
+            const url = `${BASE_URL}/static/storage/outputs/facturas/${numeroDocumento}.xml`;
+            testURL(url, 'XML');
+        }
+
+        function testZIP() {
+            const url = `${BASE_URL}/static/storage/outputs/zip/${numeroDocumento}.zip`;
+            testURL(url, 'ZIP');
+        }
+
+        function testCDR() {
+            const url = `${BASE_URL}/static/storage/outputs/cdr/CDR-${numeroDocumento}.zip`;
+            testURL(url, 'CDR');
+        }
+    </script>
+</body>
+</html>

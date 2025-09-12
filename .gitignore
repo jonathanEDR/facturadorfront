@@ -1,0 +1,70 @@
+########################################
+# Node & Next.js Professional .gitignore
+########################################
+
+# Node dependencies
+node_modules/
+
+# Yarn & PnP
+.pnp*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Testing
+coverage/
+
+# Next.js build output
+.next/
+out/
+build/
+
+# Vercel
+.vercel/
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment variables
+.env*
+!.env.example
+.env.development
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+*.pem
+*.log
+*.swp
+*.swo
+*.tmp
+*.bak
+
+# OS generated files
+Icon?
+ehthumbs.db
+Desktop.ini
+
+# IDEs and editors
+.vscode/
+.idea/
+.history/
+
+# Mac
+.AppleDouble
+.LSOverride
+
+# Windows
+*.lnk
+
+# Optional: Ignore local storage (if used)
+storage/
