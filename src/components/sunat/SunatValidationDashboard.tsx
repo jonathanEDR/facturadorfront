@@ -125,46 +125,35 @@ export const SunatValidationDashboard: React.FC<SunatValidationDashboardProps> =
 
   // Función para validar manualmente
   const handleManualValidation = async () => {
-    console.log('🔍 Dashboard - Iniciando validación manual para empresa:', empresaId);
     setIsValidating(true);
     setError(null);
 
     try {
-      // ✅ Obtener token de Clerk
-      console.log('🔍 Dashboard - Obteniendo token de Clerk...');
+      // Obtener token de Clerk
       const token = await getToken();
       
       if (!token) {
         throw new Error('No se pudo obtener el token de autenticación');
       }
 
-      console.log('✅ Dashboard - Token obtenido correctamente');
-      console.log('🔍 Dashboard - Empresa ID:', empresaId);
-
       const url = `/api/empresas/${empresaId}/validar-sunat`;
-      console.log('🔍 Dashboard - URL de validación:', url);
 
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // ✅ Usar token de Clerk
+          'Authorization': `Bearer ${token}`
         }
       });
 
-      console.log('🔍 Dashboard - Response status:', response.status);
-      console.log('🔍 Dashboard - Response ok:', response.ok);
-
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('❌ Dashboard - Error response:', errorData);
         throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
-      console.log('✅ Dashboard - Resultado completo:', result);
       
-      // ✅ Actualizar datos de validación con la respuesta real
+      // Actualizar datos de validación con la respuesta real
       const newValidationData = {
         ...validationData!,
         validacion_exitosa: result.validacion_exitosa || false,
@@ -177,11 +166,8 @@ export const SunatValidationDashboard: React.FC<SunatValidationDashboardProps> =
         detalles: result.detalles || {}
       };
 
-      console.log('🔄 Dashboard - Actualizando validationData:', newValidationData);
       setValidationData(newValidationData);
-
       setLastValidation(new Date().toLocaleString());
-      console.log('✅ Dashboard - Validación completada exitosamente');
       
       if (onValidationComplete) {
         onValidationComplete(result);

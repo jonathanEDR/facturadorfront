@@ -156,3 +156,36 @@ export interface SunatConfigResponse {
     last_validation?: string;
   };
 }
+
+// Nuevos tipos para el manejo de modo BETA/PRODUCCIÓN
+export interface SunatModeChangeRequest {
+  test_mode: boolean;
+}
+
+export interface SunatCredentialsInfo {
+  empresa_id: string;
+  ruc: string;
+  razon_social: string;
+  credenciales_activas: {
+    usuario_sol: string;
+    clave_sol: string;
+    test_mode: boolean;
+    modo: string;
+    tipo: string;
+  };
+  tiene_credenciales_originales: boolean;
+  configuracion_completa: boolean;
+  puede_cambiar_a_produccion: boolean;
+  modo_actual: string;
+}
+
+export interface SunatBetaConfigRequest {
+  // Request vacío - las credenciales se generan automáticamente
+  [key: string]: never;
+}
+
+export interface SunatIntelligentConfigRequest {
+  test_mode: boolean;
+  usuario_sol?: string;
+  clave_sol?: string;
+}

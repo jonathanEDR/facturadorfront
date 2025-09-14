@@ -45,7 +45,7 @@ const VerificacionExterna: React.FC<VerificacionExternaProps> = ({
       setCopiado(tipo);
       setTimeout(() => setCopiado(null), 2000);
     } catch (error) {
-      console.error('Error copiando al portapapeles:', error);
+      // Error silenciado para producción
     }
   };
 
