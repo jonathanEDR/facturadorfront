@@ -189,3 +189,14 @@ export interface SunatIntelligentConfigRequest {
   usuario_sol?: string;
   clave_sol?: string;
 }
+
+// Configuración para API de Consulta de Validez de Comprobantes
+export interface ConsultaValidezConfig {
+  configurada: boolean;
+  activa: boolean;
+  test_mode: boolean;
+  client_id?: string;
+  tiene_credenciales: boolean;
+  ultimo_token_refresh?: string;
+  expira_en?: string;
+}

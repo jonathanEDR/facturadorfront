@@ -7,3 +7,4 @@ export { default as EmpresaConfiguration } from './EmpresaConfiguration';
 export { default as EmpresaFormModal } from './EmpresaFormModal';
 export { default as NumeracionConfig } from './NumeracionConfig';
 export { default as CertificadoFormSection } from './CertificadoFormSection';
+export { default as ConsultaValidezConfig } from './ConsultaValidezConfig';

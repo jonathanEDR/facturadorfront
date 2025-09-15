@@ -19,6 +19,7 @@ import {
   Bell,
   HelpCircle
 } from "@/components/icons";
+import { Search } from "lucide-react";
 import { SignedIn, useUser } from "@clerk/nextjs";
 
 interface NavigationItem {
@@ -85,6 +86,17 @@ const navigationSections: NavigationSection[] = [
         href: "/certificates",
         icon: CreditCard,
         description: "Certificados digitales"
+      }
+    ]
+  },
+  {
+    title: "Consultas SUNAT",
+    items: [
+      {
+        name: "Validez Comprobantes",
+        href: "/consulta-validez",
+        icon: Search,
+        description: "Consultar validez de comprobantes"
       }
     ]
   },

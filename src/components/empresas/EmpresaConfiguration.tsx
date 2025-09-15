@@ -5,11 +5,12 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Shield, Building, Hash, Zap } from 'lucide-react';
+import { ArrowLeft, Shield, Building, Hash, Search, Zap } from 'lucide-react';
 import { CertificadosManager } from '@/components/certificates/CertificadosManager';
 import SunatConfig from '@/components/sunat/SunatConfig';
 import IntegracionTest from '@/components/integration/IntegracionTest';
 import NumeracionConfig from '@/components/empresas/NumeracionConfig';
+import ConsultaValidezConfig from '@/components/empresas/ConsultaValidezConfig';
 import { EmpresaResponse, EmpresaDetailResponse } from '@/types/empresa';
 
 interface EmpresaConfigurationProps {
@@ -17,7 +18,7 @@ interface EmpresaConfigurationProps {
   onBack: () => void;
 }
 
-type ConfigSection = 'certificados' | 'sunat' | 'numeracion' | 'integracion';
+type ConfigSection = 'certificados' | 'sunat' | 'numeracion' | 'consulta-validez' | 'integracion';
 
 export default function EmpresaConfiguration({ empresa, onBack }: EmpresaConfigurationProps) {
   const [activeSection, setActiveSection] = useState<ConfigSection>('certificados');
@@ -28,6 +29,7 @@ export default function EmpresaConfiguration({ empresa, onBack }: EmpresaConfigu
     certificados: isDetailResponse && empresa.tiene_certificado,
     sunat: isDetailResponse && empresa.tiene_configuracion_sunat,
     numeracion: false, // Por implementar
+    consultaValidez: false, // Por implementar
     facturacion: isDetailResponse && empresa.puede_facturar
   };
 
@@ -53,6 +55,13 @@ export default function EmpresaConfiguration({ empresa, onBack }: EmpresaConfigu
       icon: Hash,
       status: configStatus.numeracion,
       description: 'Series de comprobantes'
+    },
+    {
+      id: 'consulta-validez' as ConfigSection,
+      title: 'Consulta Validez',
+      icon: Search,
+      status: configStatus.consultaValidez,
+      description: 'API validez comprobantes'
     },
     {
       id: 'integracion' as ConfigSection,
@@ -85,6 +94,15 @@ export default function EmpresaConfiguration({ empresa, onBack }: EmpresaConfigu
         return (
           <NumeracionConfig 
             empresa_ruc={empresa.ruc}
+            onConfigurationChange={() => {}}
+          />
+        );
+      case 'consulta-validez':
+        return (
+          <ConsultaValidezConfig
+            empresaId={empresa.id}
+            empresaRuc={empresa.ruc}
+            empresaRazonSocial={empresa.razon_social}
             onConfigurationChange={() => {}}
           />
         );
