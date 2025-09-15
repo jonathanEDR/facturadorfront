@@ -12,6 +12,8 @@ import {
 
 export class ConsultaValidezService {
   private api;
+  private configCache: Map<string, { data: ConsultaValidezConfiguration; timestamp: number }> = new Map();
+  private readonly CACHE_DURATION = 30000; // 30 segundos
 
   constructor(api: ReturnType<typeof useApi>) {
     this.api = api;
@@ -26,15 +28,49 @@ export class ConsultaValidezService {
    */
   async getConfiguration(empresaId: string): Promise<ConsultaValidezConfiguration | null> {
     try {
-      const response = await this.api.get<ConsultaValidezConfiguration>(
-        `/empresas/${empresaId}/sunat-api/status`
+      // Verificar caché primero
+      const cached = this.configCache.get(empresaId);
+      if (cached && (Date.now() - cached.timestamp) < this.CACHE_DURATION) {
+        console.log('📦 Usando configuración desde caché');
+        return cached.data;
+      }
+
+      const response = await this.api.get<any>(
+        `/empresas/${empresaId}/consulta-validez/estado`
       );
       
       if (response.error) {
         throw new Error(response.error);
       }
       
-      return response.data;
+      const data = response.data;
+      if (!data) {
+        return null;
+      }
+      
+      // Mapear la respuesta del backend al formato esperado por el frontend
+      const config: ConsultaValidezConfiguration = {
+        empresa_id: empresaId,
+        empresa_ruc: data.ruc || '',
+        status: data.status || (data.configurado ? 'configured' : 'not-configured'),
+        habilitado: data.activo || data.habilitado || false,
+        tiene_credenciales: data.configurado || data.tiene_credenciales || false,
+        tiene_token: data.tiene_token || false,
+        token_valido: data.token_valido || false,
+        // Mapear las credenciales si existen
+        credentials: data.credentials ? {
+          client_id: data.credentials.client_id || '',
+          client_secret: data.credentials.client_secret || ''
+        } : undefined
+      };
+      
+      // Guardar en caché
+      this.configCache.set(empresaId, {
+        data: config,
+        timestamp: Date.now()
+      });
+      
+      return config;
     } catch (error) {
       console.error('Error obteniendo configuración de consulta validez:', error);
       throw error;
@@ -50,13 +86,16 @@ export class ConsultaValidezService {
   ): Promise<{ success: boolean; message: string }> {
     try {
       const response = await this.api.post<{ success: boolean; message: string }>(
-        `/empresas/${empresaId}/sunat-api/configure?validar_conectividad=false`, 
-        credentials  // Enviar directamente el objeto, no como body string
+        `/empresas/${empresaId}/consulta-validez/configurar`, 
+        credentials  // Enviar directamente el objeto
       );
       
       if (response.error) {
         throw new Error(response.error);
       }
+      
+      // Limpiar caché después de configurar credenciales
+      this.configCache.delete(empresaId);
       
       return response.data || { success: false, message: 'Error desconocido' };
     } catch (error) {
@@ -79,12 +118,16 @@ export class ConsultaValidezService {
         message: string; 
         token_info?: TokenInfo 
       }>(
-        `/empresas/${empresaId}/sunat-api/test-connectivity`
+        `/empresas/${empresaId}/consulta-validez/probar`,
+        { validar_credenciales: true }  // Enviar el cuerpo esperado por el backend
       );
       
       if (response.error) {
         throw new Error(response.error);
       }
+      
+      // Limpiar caché después de probar la conexión
+      this.configCache.delete(empresaId);
       
       return response.data || { success: false, message: 'Error desconocido' };
     } catch (error) {
@@ -107,7 +150,8 @@ export class ConsultaValidezService {
         message: string; 
         token_info?: TokenInfo 
       }>(
-        `/empresas/${empresaId}/sunat-api/test-connectivity`
+        `/empresas/${empresaId}/consulta-validez/probar`,
+        { validar_credenciales: true }  // Enviar el cuerpo esperado por el backend
       );
       
       if (response.error) {

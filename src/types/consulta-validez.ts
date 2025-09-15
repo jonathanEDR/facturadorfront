@@ -14,6 +14,11 @@ export interface ConsultaValidezConfiguration {
   expires_at?: string;
   created_at?: string;
   updated_at?: string;
+  // Nuevos campos del backend fix
+  habilitado?: boolean;
+  tiene_credenciales?: boolean;
+  tiene_token?: boolean;
+  token_valido?: boolean;
 }
 
 export interface ConsultaValidezRequest {
